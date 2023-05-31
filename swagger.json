@@ -1,0 +1,129 @@
+{
+    "openapi": "3.0.3",
+    "in fo": {
+        "title": "Web2-API",
+        "description": "API para cadastros de usuários e projetos.",
+        "contact": {
+            "name": ["Guilherme Zanella", "Adrian Silva"],
+            "email": ["gzanella@utfpr.edu.br", ""]
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8081/api",
+            "description": "rota para API"
+        }
+    ],
+    "paths": {
+        "/receita": {
+            "post": {
+                "summary": "Cadastro de Receita",
+                "description": "Essa rota irá cadastrar uma receita",
+                "tags": [
+                    "Receitas"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Receita"
+                            },
+                            "examples": {
+                                "receita": {
+                                    "value": {
+                                        "nome": "Gelo",
+                                        "ingredientes": "Água",
+                                        "preparo": "Congelar"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Receita cadastrada com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/Receita"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/receita/{id}": {
+            "get": {
+                "summary": "Busca receita pelo Id",
+                "description": "Essa rota irá buscar uma por receita pelo ID.",
+                "tags": [
+                    "Receitas"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID da receita no banco de dados.",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/Receita"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },"/receitas": {
+            "get": {
+                "summary": "Busca todas as receitas",
+                "description": "Essa rota irá buscar todas as receitas da base",
+                "tags": [
+                    "Receitas"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/Receita"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Receita": {
+                "type": "object",
+                "properties": {
+                    "nome": {
+                        "type": "string"
+                    },
+                    "ingredientes": {
+                        "type": "string"
+                    },
+                    "preparo": {
+                        "type": "string"
+                    }
+                }
+            }
+        }
+    }
+}
