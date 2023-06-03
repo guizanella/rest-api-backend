@@ -1,10 +1,29 @@
 const express = require('express')
-const route = express.Router()/*
-const controllerUser = require('../controller/controllerUser')
-const controllerSession = require('../controller/controllerSession')
-const controllerPresentation = require('../controller/controllerPresentation')
+const route = express.Router()
+const usuarioController = require('../controllers/usuarioController')
+const projetoController = require('../controllers/projetoController')
+//const controllerSession = require('../controller/controllerSession')
+
+// Autenticação
+route.post("/usuario/login", usuarioController.postLogin);
+route.post("/usuario/logout", usuarioController.postLogout);
+
+// Usuario
+route.get("/usuario/:id", usuarioController.getUsuarioById);
+route.get("/usuarios", usuarioController.getUsuarios);
+route.post("/usuario", usuarioController.postUsuario);
+route.put('/usuario/:id', usuarioController.putUsuario);
+route.delete('/usuario/:id', usuarioController.deleteUsuario);
+
+// Projeto
+route.get("/projeto/:id", projetoController.getProjetoById);
+route.get("/projetos", projetoController.getProjetos);
+route.post("/projeto", projetoController.postProjeto);
+route.put('/projeto/:id', projetoController.putProjeto);
+route.delete('/projeto/:id', projetoController.deleteProjeto);
 
 
+/*
 route.get('/', controllerSession.getInicio)
 route.get('/logout', controllerSession.getLogout)
 route.post('/login', controllerSession.postLogin)

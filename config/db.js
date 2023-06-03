@@ -14,6 +14,7 @@ db.candidatoProjeto = require('../models/candidatoProjeto.js')(sequelize, Sequel
 db.selecionadoProjeto = require('../models/selecionadoProjeto.js')(sequelize, Sequelize);
 
 db.Usuario.hasMany(db.Projeto, { foreignKey: 'id_responsavel' });
+db.Projeto.belongsTo(db.Usuario, { foreignKey: 'id_responsavel', as: 'responsavel' });
 db.Usuario.belongsToMany(db.Projeto, { through: db.candidatoProjeto });
 db.Projeto.belongsToMany(db.Usuario, { through: db.candidatoProjeto });
 db.Usuario.belongsToMany(db.Projeto, { through: db.selecionadoProjeto });

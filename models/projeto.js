@@ -16,20 +16,12 @@ module.exports = (sequelize, Sequelize) => {
             allowNull: false
         },
         ano_inicio: {
-            type: Sequelize.DATE,
+            type: Sequelize.INTEGER,
             allowNull: false
         },
         ano_fim: {
-            type: Sequelize.DATE,
+            type: Sequelize.INTEGER,
             allowNull: false
-        },
-        popularidade: {
-            type: Sequelize.VIRTUAL,
-            get() {
-                return db.candidatoProjeto.count({
-                    where: { projetoId: this.id },
-                });
-            }
         }
     },
     {
