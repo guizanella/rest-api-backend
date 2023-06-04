@@ -64,7 +64,7 @@ module.exports = {
 
             await db.Usuario.destroy({ where: { id: req.params.id } })
                 .then(() => {
-                    return res.status(204).json();
+                    return res.json("Usuário deletado.");
                 });
 
         } else return res.status(401).json(msg)

@@ -47,16 +47,19 @@ module.exports = {
     async deleteProjeto(req, res) {
         if (!req.session.Usuario) return res.status(401).json(msg)
 
+        candidatos = await db.candidatoProjeto.count({ where: { projetoId: req.params.id } })
+
         projeto = await db.Projeto.findOne({ where: { id: req.params.id } })
 
         if (req.session.Usuario[0].tipo == 2 &&
-            projeto.id_responsavel == req.session.Usuario[0].id
-            /* && se não tiver candidatos */) {
+            projeto.id_responsavel == req.session.Usuario[0].id) {
+
+            if (candidatos > 0) return res.status(405).json("Não é possível excluir projeto que tem interessados.")
 
             await db.Projeto.destroy({
                 where: { id: req.params.id }
             }).then(() => {
-                return res.status(204).json();
+                return res.json("Projeto deletado.");
             });
 
         } else return res.status(401).json(msg)
