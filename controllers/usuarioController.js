@@ -30,20 +30,6 @@ module.exports = {
         } else { return res.status(401).json(msg) }
     },
 
-    async getUsuarioById(req, res) {
-        if (!req.session.Usuario) return res.status(401).json(msg)
-
-        if (req.session.Usuario[0].tipo == 1) {
-
-            const { id } = req.params;
-            usuario = await db.Usuario.findOne({ where: { id: id } })
-
-            if (usuario) { return res.json({ "data": { usuario } }); }
-            else { return res.status(204).json() }
-
-        } else { return res.status(401).json(msg) }
-    },
-
     async postUsuario(req, res) {
         if (!req.session.Usuario) return res.status(401).json(msg)
 

@@ -9,14 +9,12 @@ route.post("/usuario/login", usuarioController.postLogin);
 route.post("/usuario/logout", usuarioController.postLogout);
 
 // Usuario
-route.get("/usuario/:id", usuarioController.getUsuarioById);
 route.get("/usuarios", usuarioController.getUsuarios);
 route.post("/usuario", usuarioController.postUsuario);
 route.put('/usuario/:id', usuarioController.putUsuario);
 route.delete('/usuario/:id', usuarioController.deleteUsuario);
 
 // Projeto
-route.get("/projeto/:id", projetoController.getProjetoById);
 route.get("/projetos", projetoController.getProjetos);
 route.post("/projeto", projetoController.postProjeto);
 route.put('/projeto/:id', projetoController.putProjeto);

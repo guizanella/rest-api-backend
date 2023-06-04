@@ -12,42 +12,54 @@ module.exports = {
         //trazer selecionados e popularidade
     },
 
-    async getProjetoById(req, res) {
-
-        const { id } = req.params;
-        projeto = await db.Projeto.findOne({ where: { id: id } })
-        if (projeto)
-            return res.json({ "data": { projeto } });
-        else
-            return res.status(204).json();
-    },
-
     async postProjeto(req, res) {
+        if (!req.session.Usuario) return res.status(401).json(msg)
 
-        const projeto = new db.Projeto(req.body);
+        if (req.session.Usuario[0].tipo == 2) {
+            const projeto = new db.Projeto(req.body); 
+            projeto.id_responsavel = req.session.Usuario[0].id
 
-        await projeto.save().then((projeto) => {
-            return res.status(201).json({ "data": { projeto } });
-        });
+            await projeto.save().then((projeto) => {
+                return res.status(201).json({ "data": { projeto } });
+            });
+        } else return res.status(401).json(msg)
     },
 
     async putProjeto(req, res) {
+        if (!req.session.Usuario) return res.status(401).json(msg)
 
-        await db.Projeto.update(req.body, {
-            where: { id: req.params.id },
-            returning: true
-        }).then((projeto) => {
-            return res.status(201).json({ "data": { projeto } });
-        });
+        projeto = await db.Projeto.findOne({ where: { id: req.params.id } })
+
+        if (req.session.Usuario[0].tipo == 2 &&
+            projeto.id_responsavel == req.session.Usuario[0].id) {
+
+            req.body.id_responsavel = req.session.Usuario[0].id
+
+            await db.Projeto.update(req.body, {
+                where: { id: req.params.id }
+            }).then((projeto) => {
+                return res.status(201).json({ "data": { projeto } });
+            });
+
+        } else return res.status(401).json(msg)
     },
 
     async deleteProjeto(req, res) {
-        //se não tiver candidatos
-        await db.Projeto.destroy({
-            where: { id: req.params.id }
-        }).then(() => {
-            return res.status(204).json();
-        });
+        if (!req.session.Usuario) return res.status(401).json(msg)
+
+        projeto = await db.Projeto.findOne({ where: { id: req.params.id } })
+
+        if (req.session.Usuario[0].tipo == 2 &&
+            projeto.id_responsavel == req.session.Usuario[0].id
+            /* && se não tiver candidatos */) {
+
+            await db.Projeto.destroy({
+                where: { id: req.params.id }
+            }).then(() => {
+                return res.status(204).json();
+            });
+
+        } else return res.status(401).json(msg)
     }
 
     //find by id responsavel
