@@ -1,4 +1,5 @@
 const db = require('../config/db')
+const { Op } = require('sequelize');
 const msg = "Operação não autorizada."
 
 module.exports = {
@@ -68,5 +69,19 @@ module.exports = {
                 });
 
         } else return res.status(401).json(msg)
+    },
+
+    async getSelecionadosByProjeto(req, res) {
+
+        var selecionadosProjeto = await db.selecionadoProjeto.findAll({ where: { projetoId: req.params.id } });
+
+        var idSelecionados = []
+
+        for (var i = 0; i < selecionadosProjeto.length; i++) {
+            idSelecionados.push(selecionadosProjeto[i].usuarioId)
+        }
+
+        const selecionados = await db.Usuario.findAll({ where: { id: idSelecionados } });
+        return res.json({ "data": { selecionados } });
     }
 }

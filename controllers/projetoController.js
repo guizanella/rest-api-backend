@@ -6,17 +6,32 @@ module.exports = {
     async getProjetos(req, res) {
 
         const projetos = await db.Projeto.findAll({
-            include: [{ model: db.Usuario, as: 'responsavel' }]
+            include: [
+                {
+                    model: db.Usuario, as: 'responsavel'
+                },
+                {
+                    model: db.Usuario,
+                    through: {
+                        model: db.selecionadoProjeto,
+                        attributes: []
+                    }
+                }
+            ]
         });
+
+        for (var i = 0; i < projetos.length; i++) {
+            projetos[i].dataValues.popularidade = await db.candidatoProjeto.count({ where: { projetoId: projetos[i].id } })
+        }
+
         return res.json({ "data": { projetos } });
-        //trazer selecionados e popularidade
     },
 
     async postProjeto(req, res) {
         if (!req.session.Usuario) return res.status(401).json(msg)
 
         if (req.session.Usuario[0].tipo == 2) {
-            const projeto = new db.Projeto(req.body); 
+            const projeto = new db.Projeto(req.body);
             projeto.id_responsavel = req.session.Usuario[0].id
 
             await projeto.save().then((projeto) => {
@@ -63,7 +78,29 @@ module.exports = {
             });
 
         } else return res.status(401).json(msg)
-    }
+    },
 
-    //find by id responsavel
+    async getProjetosAndCandidatosByResponsavel(req, res) {
+        if (!req.session.Usuario) return res.status(401).json(msg)
+
+        if (req.session.Usuario[0].tipo == 2) {
+            const projetos = await db.Projeto.findAll({
+                where: {
+                    id_responsavel: req.session.Usuario[0].id
+                },
+                include: [
+                    {
+                        model: db.Usuario,
+                        through: {
+                            model: db.candidatoProjeto,
+                            attributes: []
+                        }
+                    }
+                ]
+            });
+
+            return res.json({ "data": { projetos } });
+
+        } else return res.status(401).json(msg)
+    }
 }
