@@ -4,7 +4,8 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "swagger-autogen": "node swagger.js"
   },
   "keywords": [],
   "author": "",
@@ -12,11 +13,11 @@
   "dependencies": {
     "express": "^4.18.1",
     "express-session": "^1.17.3",
-    "mongoose": "^6.3.2",
     "pg": "^8.11.0",
     "pg-hstore": "^2.3.4",
     "sequelize": "^6.31.1",
     "swagger-json": "^2.0.0",
+    "swagger-autogen": "^2.23.1",
     "swagger-ui-express": "^4.3.0",
     "unirest": "^0.6.0"
   }
