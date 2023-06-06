@@ -1,40 +1,41 @@
 {
     "openapi": "3.0.3",
-    "in fo": {
-        "title": "Web2-API",
-        "description": "API para cadastros de usuários e projetos.",
+    "info": {
+        "title": "Web 2 - API",
+        "description": "Essa API fornece recursos para persistência de usuários e projetos em banco de dados",
         "contact": {
-            "name": ["Guilherme Zanella", "Adrian Silva"],
-            "email": ["gzanella@utfpr.edu.br", ""]
+            "names": [
+                "Guilherme Zanella",
+                "Adrian Silva"
+            ]
         },
         "version": "1.0.0"
     },
     "servers": [
         {
-            "url": "http://localhost:8081/api",
+            "url": "http://localhost:8081",
             "description": "rota para API"
         }
     ],
     "paths": {
-        "/receita": {
+        "/usuario/login": {
             "post": {
-                "summary": "Cadastro de Receita",
-                "description": "Essa rota irá cadastrar uma receita",
+                "summary": "Login de Usuário",
+                "description": "Essa rota realiza o login de um usuário",
                 "tags": [
-                    "Receitas"
+                    "Usuários"
                 ],
                 "requestBody": {
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/Receita"
+                                "$ref": "#/components/schemas/LoginData"
                             },
                             "examples": {
-                                "receita": {
+                                "login": {
                                     "value": {
-                                        "nome": "Gelo",
-                                        "ingredientes": "Água",
-                                        "preparo": "Congelar"
+                                        "email": "example@example.com",
+                                        "senha": "senha123"
                                     }
                                 }
                             }
@@ -43,12 +44,31 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Receita cadastrada com sucesso",
+                        "description": "Usuário logado com sucesso",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "type": "object",
-                                    "$ref": "#/components/schemas/Receita"
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "E-mail ou senha incorretos",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -56,41 +76,38 @@
                 }
             }
         },
-        "/receita/{id}": {
-            "get": {
-                "summary": "Busca receita pelo Id",
-                "description": "Essa rota irá buscar uma por receita pelo ID.",
+        "/usuario/logout": {
+            "post": {
+                "summary": "Logout de Usuário",
+                "description": "Essa rota realiza o logout de um usuário",
                 "tags": [
-                    "Receitas"
-                ],
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "ID da receita no banco de dados.",
-                        "required": true
-                    }
+                    "Usuários"
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Usuário desconectado com sucesso",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "type": "object",
-                                    "$ref": "#/components/schemas/Receita"
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
                                 }
                             }
                         }
                     }
                 }
             }
-        },"/receitas": {
+        },
+        "/usuarios": {
             "get": {
-                "summary": "Busca todas as receitas",
-                "description": "Essa rota irá buscar todas as receitas da base",
+                "summary": "Obter Usuários",
+                "description": "Essa rota retorna a lista de usuários",
                 "tags": [
-                    "Receitas"
+                    "Usuários"
                 ],
                 "responses": {
                     "200": {
@@ -99,7 +116,655 @@
                             "application/json": {
                                 "schema": {
                                     "type": "object",
-                                    "$ref": "#/components/schemas/Receita"
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "usuarios": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/Usuario"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Operação não autorizada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/usuario": {
+            "post": {
+                "summary": "Criar Usuário",
+                "description": "Essa rota cria um novo usuário",
+                "tags": [
+                    "Usuários"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/NovoUsuario"
+                            },
+                            "examples": {
+                                "usuario": {
+                                    "value": {
+                                        "nome": "John Doe",
+                                        "idade": 25,
+                                        "cpf": "12345678901",
+                                        "email": "john.doe@example.com",
+                                        "senha": "senha123",
+                                        "tipo": 1
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Usuário criado com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "usuario": {
+                                                    "$ref": "#/components/schemas/Usuario"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Operação não autorizada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/usuario/{id}": {
+            "put": {
+                "summary": "Atualizar Usuário",
+                "description": "Essa rota atualiza um usuário existente",
+                "tags": [
+                    "Usuários"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID do usuário no banco de dados",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AtualizaUsuario"
+                            },
+                            "examples": {
+                                "usuario": {
+                                    "value": {
+                                        "nome": "John Doe",
+                                        "idade": 30,
+                                        "cpf": "12345678901",
+                                        "email": "john.doe@example.com",
+                                        "senha": "novasenha123",
+                                        "tipo": 1
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Usuário atualizado com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "usuario": {
+                                                    "$ref": "#/components/schemas/Usuario"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Operação não autorizada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Deletar Usuário",
+                "description": "Essa rota deleta um usuário existente",
+                "tags": [
+                    "Usuários"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID do usuário no banco de dados",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Usuário deletado com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Operação não autorizada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/selecionados/{id}": {
+            "get": {
+                "summary": "Obter Selecionados por Projeto",
+                "description": "Essa rota retorna os usuários selecionados para um projeto específico",
+                "tags": [
+                    "Usuários"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID do projeto no banco de dados",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "selecionados": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/Usuario"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/projetos": {
+            "get": {
+                "summary": "Obter Projetos",
+                "description": "Essa rota retorna todos os projetos cadastrados",
+                "tags": [
+                    "Projetos"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "projetos": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/Projeto"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/projeto": {
+            "post": {
+                "summary": "Cadastro de Projeto",
+                "description": "Essa rota irá cadastrar um novo projeto",
+                "tags": [
+                    "Projetos"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ProjetoInput"
+                            },
+                            "examples": {
+                                "projeto": {
+                                    "value": {
+                                        "nome": "Nome do Projeto",
+                                        "descricao": "Descrição do Projeto",
+                                        "ano_inicio": 2023,
+                                        "ano_fim": 2025
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Projeto cadastrado com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "projeto": {
+                                                    "$ref": "#/components/schemas/Projeto"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/projeto/{id}": {
+            "put": {
+                "summary": "Atualização de Projeto",
+                "description": "Essa rota permite atualizar um projeto existente",
+                "tags": [
+                    "Projetos"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID do projeto no banco de dados",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ProjetoInput"
+                            },
+                            "examples": {
+                                "projeto": {
+                                    "value": {
+                                        "nome": "Nome atualizado",
+                                        "descricao": "Descrição atualizada",
+                                        "ano_inicio": 2023,
+                                        "ano_fim": 2025
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Projeto atualizado com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "projeto": {
+                                                    "$ref": "#/components/schemas/Projeto"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Exclusão de Projeto",
+                "description": "Essa rota permite excluir um projeto existente",
+                "tags": [
+                    "Projetos"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID do projeto no banco de dados",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Projeto excluído com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Operação não autorizada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "405": {
+                        "description": "Não é possível excluir projeto que tem interessados",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/projetos/candidatos": {
+            "get": {
+                "summary": "Listar Projetos e Candidatos por Responsável",
+                "description": "Essa rota permite listar os projetos e seus candidatos associados por um responsável",
+                "tags": [
+                    "Projetos"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Projetos e seus candidatos listados com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "projetos": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/Projeto"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Operação não autorizada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/candidatar": {
+            "post": {
+                "summary": "Candidatar a um Projeto",
+                "description": "Essa rota permite que um usuário do tipo 'Candidato' se candidate a um projeto",
+                "tags": [
+                    "Relacionamentos"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CandidatoProjeto"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Candidatura realizada com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "candidatoProjeto": {
+                                                    "$ref": "#/components/schemas/CandidatoProjeto"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Operação não autorizada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/selecionar": {
+            "post": {
+                "summary": "Selecionar um Candidato para um Projeto",
+                "description": "Essa rota permite que um usuário do tipo 'Responsável' selecione um candidato para um projeto",
+                "tags": [
+                    "Relacionamentos"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SelecionadoProjeto"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Candidato selecionado com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "selecionadoProjeto": {
+                                                    "$ref": "#/components/schemas/SelecionadoProjeto"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Operação não autorizada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Candidato não encontrado para este projeto",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "string"
                                 }
                             }
                         }
@@ -110,17 +775,123 @@
     },
     "components": {
         "schemas": {
-            "Receita": {
+            "LoginData": {
+                "type": "object",
+                "properties": {
+                    "email": {
+                        "type": "string"
+                    },
+                    "senha": {
+                        "type": "string"
+                    }
+                }
+            },
+            "Usuario": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "nome": {
+                        "type": "string"
+                    },
+                    "idade": {
+                        "type": "integer"
+                    },
+                    "cpf": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "senha": {
+                        "type": "string"
+                    },
+                    "tipo": {
+                        "type": "integer"
+                    }
+                }
+            },
+            "AtualizaUsuario": {
                 "type": "object",
                 "properties": {
                     "nome": {
                         "type": "string"
                     },
-                    "ingredientes": {
+                    "idade": {
+                        "type": "integer"
+                    },
+                    "cpf": {
                         "type": "string"
                     },
-                    "preparo": {
+                    "email": {
                         "type": "string"
+                    },
+                    "senha": {
+                        "type": "string"
+                    },
+                    "tipo": {
+                        "type": "integer"
+                    }
+                }
+            },
+            "Projeto": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "nome": {
+                        "type": "string"
+                    },
+                    "descricao": {
+                        "type": "string"
+                    },
+                    "ano_inicio": {
+                        "type": "integer"
+                    },
+                    "ano_fim": {
+                        "type": "integer"
+                    },
+                    "responsavel": {
+                        "$ref": "#/components/schemas/Usuario"
+                    },
+                    "selecionados": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Usuario"
+                        }
+                    }
+                }
+            },
+            "ProjetoInput": {
+                "type": "object",
+                "properties": {
+                    "nome": {
+                        "type": "string"
+                    },
+                    "descricao": {
+                        "type": "string"
+                    },
+                    "ano_inicio": {
+                        "type": "integer"
+                    },
+                    "ano_fim": {
+                        "type": "integer"
+                    }
+                }
+            },
+            "SelecionadoProjeto": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "projetoId": {
+                        "type": "integer"
+                    },
+                    "usuarioId": {
+                        "type": "integer"
                     }
                 }
             }

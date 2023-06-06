@@ -10,7 +10,7 @@ const path = require('path');
 app.use(session({ secret: 'password', saveUninitialized: true, cookie: { maxAge: 30 * 60 * 1000 } }))
 
 app.use(express.static(path.join(__dirname, 'public')));
-const swaggerDocument = require('./swagger_output.json');
+const swaggerDocument = require('./swagger.json');
 app.use("/api-docs",swaggerUI.serve, swaggerUI.setup(swaggerDocument))
 
 app.use(express.json())

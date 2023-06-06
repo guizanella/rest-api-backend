@@ -1,5 +1,4 @@
 const db = require('../config/db')
-const { Op } = require('sequelize');
 const msg = "Operação não autorizada."
 
 module.exports = {

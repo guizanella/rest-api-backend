@@ -1,5 +1,3 @@
-const db = require('../config/db')
-
 module.exports = (sequelize, Sequelize) => {
     const Projeto = sequelize.define('projeto', {
         id: {

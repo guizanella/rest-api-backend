@@ -51,7 +51,8 @@ module.exports = {
             req.body.id_responsavel = req.session.Usuario[0].id
 
             await db.Projeto.update(req.body, {
-                where: { id: req.params.id }
+                where: { id: req.params.id },
+                returning: true
             }).then((projeto) => {
                 return res.status(201).json({ "data": { projeto } });
             });
